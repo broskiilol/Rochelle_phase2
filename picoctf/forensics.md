@@ -43,8 +43,8 @@ picoCTF{beep_boop_im_in_space}
 - <img width="1920" height="1020" alt="image" src="https://github.com/user-attachments/assets/2cb2eebf-208f-45dd-a8c1-8be7905962f3" />
  I exported the files in it, and i got 3 pictures of sheep, trees and rivers, and 1 .deb program and 2 .txt files with random numbers (nothing makes sense)
 - I start with the instructions file. "When in doubt, use rot13 code, then use base64 code, then whatever you can find" so i tried rot13 on the file.
-  ```c
-  #include<stdio.h>
+```c
+#include<stdio.h>
 int main()
 {
     char str[120]="GSGCQBRFAGRAPELCGBHEGENSSVPFBJRZHFGQVFTHVFRBHESYNTGENAFSRE.SVTHERBHGNJNLGBUVQRGURSYNTNAQVJVYYPURPXONPXSBEGURCYNA";
