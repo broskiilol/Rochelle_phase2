@@ -25,12 +25,9 @@ picoCTF{beep_boop_im_in_space}
 
 ## Notes:
 
-- Include any alternate tangents you went on while solving the challenge, including mistakes & other solutions you found.
 - 
 
 ## Resources:
-
-- Include the resources you've referred to with links. [example hyperlink](https://google.com)
 
 
 ***
@@ -44,7 +41,30 @@ picoCTF{beep_boop_im_in_space}
 - bmp== bitmap image file, 19 has plan, 146683 pic3
 
 - <img width="1920" height="1020" alt="image" src="https://github.com/user-attachments/assets/2cb2eebf-208f-45dd-a8c1-8be7905962f3" />
- I exported the files in it, and i got 3 pictures of sheep, trees and rivers, and 1 .deb program and 2 .txt files with random numbers
+ I exported the files in it, and i got 3 pictures of sheep, trees and rivers, and 1 .deb program and 2 .txt files with random numbers (nothing makes sense)
+- I start with the instructions file. "When in doubt, use rot13 code, then use base64 code, then whatever you can find" so i tried rot13 on the file.
+  ```c
+  #include<stdio.h>
+int main()
+{
+    char str[120]="GSGCQBRFAGRAPELCGBHEGENSSVPFBJRZHFGQVFTHVFRBHESYNTGENAFSRE.SVTHERBHGNJNLGBUVQRGURSYNTNAQVJVYYPURPXONPXSBEGURCYNA";
+    char rot[120];
+    for(int i=0; str[i]!='\0'; i++)
+    {
+            if(str[i]<='M'&&str[i]>='A')
+            {
+                rot[i]=str[i]+ 13;
+            }
+            else
+            rot[i]=str[i]-13;
+    }
+    puts(rot);
+}
+```
+This gave me: `TFTPDOESNTENCRYPTOURTRAFFICSOWEMUSTDISGUISEOURFLAGTRANSFER!FIGUREOUTAWAYTOHIDETHEFLAGANDIWILLCHECKBACKFORTHEPLAN` which translates to `TFTP DOESNT ENCRYPT OUR TRAFFIC SO WE MUST DISGUISE OUR FLAG TRANSFER! FIGURE OUT A WAY TO HIDE THE FLAG AND I WILL CHECK BACK FOR THE PLAN`
+- So let us look at the plan (again gibberish, we put a rot 13 to this too). We get `IUSEDTHEPROGRAMANDHIDITWITH DUEDILIGENCE!CHECKOUTTHEPHOTOS` (putting spaces in between it gets as `I USED THE PROGRAM AND HID IT WITH DUE DILIGENCE! CHECK OUT THE PHOTOS` So we need to see the program and do something with the photos
+-  
+  
 
 ## Flag:
 
@@ -55,7 +75,7 @@ picoCTF{}
 ## Concepts learnt:
 
 - .pcapng is a newer version of pcap files. pcap basically stores the data of the network traffic of an interface.
-- 
+- rot13 algorithm is basically like caeser cipher, but the shifting is done with a letter 13 positions from it
 
 ## Notes:
 
