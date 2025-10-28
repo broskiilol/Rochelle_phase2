@@ -20,14 +20,6 @@ picoCTF{beep_boop_im_in_space}
 ## Concepts learnt:
 
 - *SSTV (Slow Scan Television) is a method os sending images which are encoded in audio. So high frequency audios give bright images and low frequency audios give low brightness images*
-- 
-
-
-## Notes:
-
-- 
-
-## Resources:
 
 
 ***
@@ -62,29 +54,36 @@ int main()
 }
 ```
 This gave me: `TFTPDOESNTENCRYPTOURTRAFFICSOWEMUSTDISGUISEOURFLAGTRANSFER!FIGUREOUTAWAYTOHIDETHEFLAGANDIWILLCHECKBACKFORTHEPLAN` which translates to `TFTP DOESNT ENCRYPT OUR TRAFFIC SO WE MUST DISGUISE OUR FLAG TRANSFER! FIGURE OUT A WAY TO HIDE THE FLAG AND I WILL CHECK BACK FOR THE PLAN`
-- So let us look at the plan (again gibberish, we put a rot 13 to this too). We get `IUSEDTHEPROGRAMANDHIDITWITH DUEDILIGENCE!CHECKOUTTHEPHOTOS` (putting spaces in between it gets as `I USED THE PROGRAM AND HID IT WITH DUE DILIGENCE! CHECK OUT THE PHOTOS` So we need to see the program and do something with the photos
--  
+- So let us look at the plan (again gibberish, we put a rot 13 to this too). We get `IUSEDTHEPROGRAMANDHIDITWITH DUEDILIGENCE!CHECKOUTTHEPHOTOS` (putting spaces in between) it gets as `I USED THE PROGRAM AND HID IT WITH DUE DILIGENCE! CHECK OUT THE PHOTOS` So we need to see the program and do something with the photos
+
+-  while running the program, on looking closely, the bash gives a note `Note, selecting 'steghide' instead of './program.deb'`. I didnt understand why it is selecting steghide instead of my intended program (and i thought it was a glitch with my system so i went all around the world trying to fix it) before realising that `steghide` is our inteded place to be.
+-  I went on a whole journey of learning how to use steghide. I understood that the flag is hidden inside the .bmp pictures we have gotten. so i need to extract the flag from the pictures.
+-  I used `steghide extract -sf picture1.bmp` but now it is asking for a password (which i dont know). After a lot of trial and error, i got the password as "DUEDILIGENCE" from the plan file content. But i was still not getting anything so i thought the password was wrong and wasted a lot of time :)
+-  Finally i thought of checking with the other 2 pictures and i got it in the 3rd picture
+-  ```bash
+   steghide extract -sf picture3.bmp
+   Enter passphrase:
+   wrote extracted data to "flag.txt".
+   cat flag.txt
+   picoCTF{h1dd3n_1n_pLa1n_51GHT_18375919}
+   ```
   
 
 ## Flag:
 
 ```
-picoCTF{}
+picoCTF{h1dd3n_1n_pLa1n_51GHT_18375919}
 ```
 
 ## Concepts learnt:
 
 - .pcapng is a newer version of pcap files. pcap basically stores the data of the network traffic of an interface.
 - rot13 algorithm is basically like caeser cipher, but the shifting is done with a letter 13 positions from it
+- steghide is a tool which is used to hide stuff in other files (sort of like steganogrphy)
 
 ## Notes:
 
 - needed to download wireshark and learn how to use it...that was a struggle
-
-## Resources:
-
-- 
-
 
 ***
 #  3. tunn3l_v1s10n
