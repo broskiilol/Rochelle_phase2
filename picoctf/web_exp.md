@@ -86,3 +86,30 @@ picoCTF{s4rv3r_s1d3_t3mp14t3_1nj3ct10n5_4r3_c001_4675f3fa}
 
 
 ***
+# 3. Cookies
+
+> Who doesn't love cookies? Try to figure out the best one.
+
+## Solution:
+
+- I am given a website.
+  <img width="1904" height="929" alt="image" src="https://github.com/user-attachments/assets/f97c6945-2d61-4bd8-90d0-ac9b79f59988" />
+- It is asking for cookie names, i gave `cookie`, didnt work. After some trials, i entered `snickerdoodle` and we can see that the cookie name value changes from `-1` to `0`
+- I change this value to `1` and the cookie changes to `choco-chip cookies`
+  <img width="1911" height="958" alt="image" src="https://github.com/user-attachments/assets/3e011dc1-d353-410c-9ba2-3c229ea4666e" />
+- I start changing the values more. The cookie names on screen keeps changing along with it. (*it has to stop somewhere...right?*)
+- FINALLY (right before i gave up), at value number 18, the cookie name displays the flag
+  <img width="1908" height="1019" alt="image" src="https://github.com/user-attachments/assets/1d350a35-156d-4334-980a-b9bc4810c3ae" />
+
+
+## Flag:
+
+```
+picoCTF{3v3ry1_l0v3s_c00k135_94190c8a}
+```
+
+## Concepts learnt:
+- I learnt how to read cookie values, manipulate cookie values
+- I also explored a lot about the inspect option (since i kept getting lost when looking for the cookie values
+
+***
