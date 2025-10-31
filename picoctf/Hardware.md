@@ -57,7 +57,35 @@ FCSC{b1dee4eeadf6c4e60aeb142b0b486344e64b12b40d1046de95c89ba5e23a9925}
 
 - First i installed avr 
 `sudo apt install binutils-avr avr-libc`
-- 
+- I opened the file and it showed:
+```bash
+file ./firmware.elf
+./firmware.elf: ELF 32-bit LSB executable, Atmel AVR 8-bit, version 1 (SYSV), statically linked, with debug_info, not stripped
+```
+- This is saying that it is a 32-bit elf file. 
+- On disassmbling it (using `avr-objdump -d ./firmware.elf`) it outputted a lot of data (which i will not copy paste here for sanity of mind) But in the data i could see that there is XOR encryption
+- This calls for a python code to decode it
+  ```py
+  encoded_data = [
+    0xf1, 0xe3, 0xe6, 0xe6, 0xf1, 0xe3, 0xde, 0xf1, 0xcd, 0x94, 0xd6, 0xfa,
+    0x94, 0xd6, 0xfa, 0xd6, 0xca, 0xc8, 0x96, 0xfa, 0xd6, 0x94, 0xc8, 0xd5,
+    0xc9, 0x96, 0xfa, 0x91, 0xd7, 0xc1, 0xd0, 0x94, 0xcb, 0xca, 0xfa, 0xc3,
+    0x94, 0xd7, 0xc8, 0xd2, 0x91, 0xd7, 0xc0, 0xd8
+  ]
+
+  # XOR key is 0xA5
+  key = 0xA5
+
+  decoded = bytes([byte ^ key for byte in encoded_data])
+  print("Decoded data:", decoded)
+
+  try:
+    decoded_str = decoded.decode('ascii', errors='replace')
+    print("As string:", decoded_str)
+  except:
+    print("Could not decode as ASCII")
+```
+- This gave me the flag
 ## Flag:
 
 ```
