@@ -239,39 +239,44 @@ picoCTF{su((3ss_(r@ck1ng_r3@_24bcbc66}
 ```
 
 ## Concepts learnt:
-- 
+- The RSA algorithm involves four steps: key generation, key distribution, public-key(encryption), and private key(decryption)
+- If we take 3 positive integers e, d, and n, [x (0 ≤ x < n)], both (x^e)^d and x have the same remainder when divided by n. If is very difficult to calcuate x if d is not given (which makes it secure for encryption purposes)
 
 ## Notes:
-
 - After getting the password, i did not know what to do with it (i didnt see the hint)
-# 3. Format string 0
+- After seeing the hint i didnt understand the hint. I thought openssl was an app needed to be installed and was searching for that for like an hour...
+## Resources:
+- https://en.wikipedia.org/wiki/RSA_cryptosystem#Operation 
+# 3. miniRSA
 
-> Can you use your knowledge of format strings to make the customers happy?
+> Let's decrypt this: ciphertext? Something seems a bit small
 
 ## Solution:
 
-- On opening the netcat i get offered a menu. If i enter Breakf@st_Burger, i get error. 
-- I looked at the hint, it is telling me to research about format specifires.
-- There are various kinds of format specifiers like %d, %s etc. This makes me realised that certain options in the menu have format specifiers in them!!
-- In the first menu, `Gr%114d_Cheese` has format specifier `%114d` and in the second one, `Cla%sic_Che%s%steak` has specifier `%s`.
-```bash
-  Welcome to our newly-opened burger place Pico 'n Patty! Can you help the picky customers find their favorite burger?
-  Here comes the first customer Patrick who wants a giant bite.
-  Please choose from the following burgers: Breakf@st_Burger, Gr%114d_Cheese, Bac0n_D3luxe
-  Enter your recommendation: Gr%114d_Cheese
-  Gr                                                                                                           4202954_Cheese
-  Good job! Patrick is happy! Now can you serve the second customer?
-  Sponge Bob wants something outrageous that would break the shop (better be served quick before the shop owner kicks you out!)
-  Please choose from the following burgers: Pe%to_Portobello, $outhwest_Burger, Cla%sic_Che%s%steak
-  Enter your recommendation: Cla%sic_Che%s%steak
-  ClaCla%sic_Che%s%steakic_Che
-  picoCTF{7h3_cu570m3r_15_n3v3r_SEGFAULT_ef312157}
+- The ciphertext given has the values of c, N and e...which is ideally perfect! But on closer look, the e (=3) is very small, N is very big. 
+- From the text we see that ciphertext = plaintext³ N (e=3). So on taking the initial length and dividing it by 3 we get the initial length of the original number. Now we can make a number of that size using <<1
+- we write a loop to keep on guessing this number by squaring the number and checking how well many times this number fits into our og number using c//(x*x) and each time the guess becomes more and more accurate. We will stop when the guess becomes worse or equal to the previous guesses. This will finally be converted to bytes and then to plaintext.
+- Thus the code will be like
+```py
+ c=2205316413931134031074603746928247799030155221252519872650080519263755075355825243327515211479747536697517688468095325517209911688684309894900992899707504087647575997847717180766377832435022794675332132906451858990782325436498952049751141
+x = 1 << ((c.bit_length() + 2)//3)          
+while True:
+   y = (2*x + c//(x*x)) // 3
+   if y >= x:
+       m = x; break
+   x = y
+plaintext = m.to_bytes((m.bit_length()+7)//8, 'big')
+print(plaintext.decode())
 ```
 ## Flag:
 
 ```
-picoCTF{7h3_cu570m3r_15_n3v3r_SEGFAULT_ef312157}
+picoCTF{n33d_a_lArg3r_e_d0cd6eae}
 ```
 
 ## Concepts learnt:
-- The different kinds of format specifiers are %s (this is vulnerable), %d (for integers), %c, etc.
+- Learnt the functioning of an RSA and how it actually works, the meaning of e, N, c and how to compile it into an algorithm
+
+## Resources:
+- https://en.wikipedia.org/wiki/RSA_cryptosystem#Operation
+
