@@ -5,7 +5,9 @@ nc saturn.picoctf.net 49815
 
 ## Solution:
 
-- on opening the .c file i first read that the maximum input we could give was of 64 characters. 
+- on opening the .c file i first read that the maximum input we could give was of 64 characters.
+  ![bufferoverflowsnip](https://github.com/user-attachments/assets/b7a79b9c-6b94-42c6-ba3f-abc275305934)
+
 - So...just for trial since it is called buffer OVERFLOW, i entered more that 64 characters to see what happens. i entered 70 characters and got the flag :))
 ```bash 
    rochelle@DESKTOP-IF15GUC:~$ nc saturn.picoctf.net 49815
@@ -84,9 +86,8 @@ picoCTF{c0ntr0ll3d_clutt3r_1n_my_buff3r}
 ## Concepts learnt:
 - `gets` function is vulnerable to buffer overflow, so its presence in a code gives us a clue
 - `pattern_create` in GDB creates a character set of how many ever character u wish to input in it
-- `$rbp` is
-- little endian formate refers to
-- 
+- `$rbp` register is base pointer or frame pointer in x86-64 architecture assembly. It creates a stable reference point for a function's stack frame even when $rsp changes.
+- Little-endian and big-endian are two methods for storing the bytes in the memory. Big-endian stores the most significant byte (the "big end") at the lowest memory address, while little-endian stores the least significant byte (the "little end") first (stores in reverse). 
 
 ## Notes:
 
