@@ -77,7 +77,11 @@ I named my Ninetails "j4gjesg4", quite a peculiar name isn't it?
 
 - They gave a .rar file. So i extracted it in ubuntu using `unrar`. This gave me a .ad1 file. 
 - On extracting the file from this, i get an authroot.stl file. This is a garbage file which i got from extracting the file in the wrong manner. I was trying to extract it from WinRAR but this is a wrong approach.
-- I need to use `FTK imager` or `autopsy` to properly open the .ad1 file, so i download it first.
+- I need to use `FTK imager` or `autopsy` to properly open the .ad1 file, so i download  FTKIMAGER first. In this i open ninetails.ad1 and i get a lot of folders. I search through them and find `firefox` folder (as asked for in the question)
+![nintails2](https://github.com/user-attachments/assets/7767e4e0-d29b-4f6e-b4e8-70bac60779fc)
+
+- In the profiles tab i get the logins.json and key.db files as asked for in the question.![nintails3](https://github.com/user-attachments/assets/3dd436cf-37b8-4c3f-903b-54b0222ac6a9)
+ I extract them to my computer
 
 ### What I learned
 - .rar file is like a folder. It has various other files in it.
@@ -127,6 +131,124 @@ Learn up on volatility 2 and its various plugins and what they are used for
 
 ### Solution:
 
-- We are given a .7z file, so i opened that first, which gave me a .raw file. I was not able to open that because i didnt have that extension supported on my laptop. i converted the .raw file to .jpg and got (memorydump.jpg)
-- This memory dump doesnt make sense, so i rethink. Hint said to looks at volitility 2, so i start downloaded it on my system.
+- We are given a .7z file, so i opened that first, which gave me a .raw file called `MemoryDump_Lab1.raw`. i converted the .raw file to .jpg and got (memorydump.jpg)
+- This memory dump doesnt make sense, so i rethink. Hint said to look at volitility 2, so i start downloading it on my system. Then i get the info on the .raw file.
+
+```bash
+$ python2 ~/volatility/vol.py -f /mnt/c/Users/Rochelle/Downloads/MemoryDump_Lab1.raw imageinfo
+Volatility Foundation Volatility Framework 2.6.1
+INFO    : volatility.debug    : Determining profile based on KDBG search...
+          Suggested Profile(s) : Win7SP1x64, Win7SP0x64, Win2008R2SP0x64, Win2008R2SP1x64_24000, Win2008R2SP1x64_23418, Win2008R2SP1x64, Win7SP1x64_24000, Win7SP1x64_23418
+                     AS Layer1 : WindowsAMD64PagedMemory (Kernel AS)
+                     AS Layer2 : FileAddressSpace (/mnt/c/Users/Rochelle/Downloads/MemoryDump_Lab2.raw)
+                      PAE type : No PAE
+                           DTB : 0x187000L
+                          KDBG : 0xf800028100a0L
+          Number of Processors : 1
+     Image Type (Service Pack) : 1
+                KPCR for CPU 0 : 0xfffff80002811d00L
+             KUSER_SHARED_DATA : 0xfffff78000000000L
+           Image date and time : 2019-12-11 14:38:00 UTC+0000
+     Image local date and time : 2019-12-11 20:08:00 +0530
+```
+- The questions hints that there are 3 parts of the flag. for the first path, there is a hint that flag is in the output of a black command window so i go to the terminal. i see what processes are running using `vol.py -f /mnt/c/Users/Rochelle/Downloads/MemoryDump_Lab2.raw --profile=Win7SP1x64 pslist` In the list i see cmd.exe and conhost.exe too. So now i extract the command history
+```bash
+$ vol.py -f /mnt/c/Users/Rochelle/Downloads/MemoryDump_Lab2.raw --profile=Win7SP1x64 cmdscan
+Volatility Foundation Volatility Framework 2.6.1
+**************************************************
+CommandProcess: conhost.exe Pid: 2692
+CommandHistory: 0x1fe9c0 Application: cmd.exe Flags: Allocated, Reset
+CommandCount: 1 LastAdded: 0 LastDisplayed: 0
+FirstCommand: 0 CommandCountMax: 50
+ProcessHandle: 0x60
+Cmd #0 @ 0x1de3c0: St4G3$1
+Cmd #15 @ 0x1c0158: 
+Cmd #16 @ 0x1fdb30: 
+**************************************************
+CommandProcess: conhost.exe Pid: 2260
+CommandHistory: 0x38ea90 Application: DumpIt.exe Flags: Allocated
+CommandCount: 0 LastAdded: -1 LastDisplayed: -1
+FirstCommand: 0 CommandCountMax: 50
+ProcessHandle: 0x60
+Cmd #15 @ 0x350158: 8
+Cmd #16 @ 0x38dc00: 8
+```
+In this I can see that in command process 2692 there is `St4G3$1` at CMD #0. Now i look at the console for the stage 1 flag.
+
+```bash
+vol.py -f /mnt/c/Users/Rochelle/Downloads/MemoryDump_Lab2.raw --profile=Win7SP1x64 consoles
+Volatility Foundation Volatility Framework 2.6.1
+**************************************************
+ConsoleProcess: conhost.exe Pid: 2692
+Console: 0xff756200 CommandHistorySize: 50
+HistoryBufferCount: 1 HistoryBufferMax: 4
+OriginalTitle: %SystemRoot%\system32\cmd.exe
+Title: C:\Windows\system32\cmd.exe - St4G3$1
+AttachedProcess: cmd.exe Pid: 1984 Handle: 0x60
+----
+CommandHistory: 0x1fe9c0 Application: cmd.exe Flags: Allocated, Reset
+CommandCount: 1 LastAdded: 0 LastDisplayed: 0
+FirstCommand: 0 CommandCountMax: 50
+ProcessHandle: 0x60
+Cmd #0 at 0x1de3c0: St4G3$1
+----
+Screen 0x1e0f70 X:80 Y:300
+Dump:
+Microsoft Windows [Version 6.1.7601]
+Copyright (c) 2009 Microsoft Corporation.  All rights reserved.
+
+C:\Users\SmartNet>St4G3$1
+ZmxhZ3t0aDFzXzFzX3RoM18xc3Rfc3Q0ZzMhIX0=
+Press any key to continue . . .
+**************************************************
+ConsoleProcess: conhost.exe Pid: 2260
+Console: 0xff756200 CommandHistorySize: 50
+HistoryBufferCount: 1 HistoryBufferMax: 4
+OriginalTitle: C:\Users\SmartNet\Downloads\DumpIt\DumpIt.exe
+Title: C:\Users\SmartNet\Downloads\DumpIt\DumpIt.exe
+AttachedProcess: DumpIt.exe Pid: 796 Handle: 0x60
+----
+CommandHistory: 0x38ea90 Application: DumpIt.exe Flags: Allocated
+CommandCount: 0 LastAdded: -1 LastDisplayed: -1
+FirstCommand: 0 CommandCountMax: 50
+ProcessHandle: 0x60
+----
+Screen 0x371050 X:80 Y:300
+Dump:
+  DumpIt - v1.3.2.20110401 - One click memory memory dumper
+  Copyright (c) 2007 - 2011, Matthieu Suiche <http://www.msuiche.net>
+  Copyright (c) 2010 - 2011, MoonSols <http://www.moonsols.com>
+
+
+    Address space size:        1073676288 bytes (   1023 Mb)
+    Free space size:          24185389056 bytes (  23064 Mb)
+
+    * Destination = \??\C:\Users\SmartNet\Downloads\DumpIt\SMARTNET-PC-20191211-
+143755.raw
+
+    --> Are you sure you want to continue? [y/n] y
+    + Processing...
+```
+In this i can see `St4G3$1 ZmxhZ3t0aDFzXzFzX3RoM18xc3Rfc3Q0ZzMhIX0=`. It seems like this part is encrypted to i decrypt it using base64. This gives `flag{th1s_1s_th3_1st_st4g3!!}`
+
+- Now we move to the second part of the stage. This is likely to be related to paintings (hint from the question). So in the pslist i got before, i search for something similar and i get `mspaint.exe` process.
+`0xfffffa80022bab30 mspaint.exe            2424    604      6      128      1      0 2019-12-11 14:35:14 UTC+0000`
+The PID for mspaint.exe is `2424`. Now i create a memory dump for thid mspaint.exe process 
+Then i search for PNG and BMP files using their file headers.
+`grep -obaP "BM" dump/2424.dmp` I dont get any match for PNG, but i get for BMP. I want just the header so `grep -obaP "BM" dump/2424.dmp | head` and i get the offsets.
+I search the offsets' HEX to search for the proper .bmp file. `xxd -s <offset> -l 64 dump/2424.dmp`. Most offsets do not give anything, but the offset `8383447` seems like a probable .bmp file. So i carve it and save it as stage2.bmp...but it is not opening.
+I try changing the header in case that is the problem, but that is not helping either
+
+
+- For stage 3: I first dump to find archives. I search for .7z, .zip or .rar files. This gives me 
+```
+0x000000003fa3ebc0      1      0 R--r-- \Device\HarddiskVolume2\Users\Alissa Simpson\Documents\Important.rar
+0x000000003fac3bc0      1      0 R--r-- \Device\HarddiskVolume2\Users\Alissa Simpson\Documents\Important.rar
+0x000000003fb48bc0      1      0 R--r-- \Device\HarddiskVolume2\Users\Alissa Simpson\Documents\Important.rar
+```
+I dump one of them.
+
+
+
+**Flag:** `flag{th1s_1s_th3_1st_st4g3!!}`
 
