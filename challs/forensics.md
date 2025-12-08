@@ -81,12 +81,45 @@ I named my Ninetails "j4gjesg4", quite a peculiar name isn't it?
 ![nintails2](https://github.com/user-attachments/assets/7767e4e0-d29b-4f6e-b4e8-70bac60779fc)
 
 - In the profiles tab i get the logins.json and key.db files as asked for in the question.![nintails3](https://github.com/user-attachments/assets/3dd436cf-37b8-4c3f-903b-54b0222ac6a9)
- I extract them to my computer
+ I extract them to my computer to a folder called `ninetails_hmm`. Now i need to decrypt them
+- I install something called `firefox_decrypt` on my terminal and i run the extracted files at once through this decrypter (Major mistake i was doing was passing it one by one and failing)
+```bash
+$ python3 firefox_decrypt.py "/mnt/c/Users/Rochelle/Downloads/ninetails_hmm"
+2025-12-08 17:49:53,108 - WARNING - profile.ini not found in /mnt/c/Users/Rochelle/Downloads/ninetails_hmm
+2025-12-08 17:49:53,108 - WARNING - Continuing and assuming '/mnt/c/Users/Rochelle/Downloads/ninetails_hmm' is a profile location
 
+Website:   https://www.rehack.xyz
+Username: 'warlocksmurf'
+Password: 'GCTF{m0zarella'
+
+Website:   https://ctftime.org
+Username: 'ilovecheese'
+Password: 'CHEEEEEEEEEEEEEEEEEEEEEEEEEESE'
+
+Website:   https://www.reddit.com
+Username: 'bluelobster'
+Password: '_f1ref0x_'
+
+Website:   https://www.facebook.com
+Username: 'flag'
+Password: 'SIKE'
+
+Website:   https://warlocksmurf.github.io
+Username: 'Man I Love Forensics'
+Password: 'p4ssw0rd}'
+```
+- These are different websites they have given with a username and password. So now i try to enter each of them to get the flag
+
+**Flag:** `GCTF{m0zarellap4ssw0rd}`
 ### What I learned
 - .rar file is like a folder. It has various other files in it.
 - .ad1 file is a local disk image format file.
-- .stl file means stereolithography. This is the file format for CAD and 3D printing
+- .stl file means stereolithography. This is the file format for CAD and 3D printing (not needed in this challenge)
+- You can login to a firefox account if u have certain information about it such as logins.json, key4.db, and cert9.db
+    - logins.json gives the login
+    - key4.db gives the decryption data
+    - cert9.db gives certification to decode it
+- Using `firefox_decrypt` we can get the login of firefox profile.
 ## Challenge 4: Hide and seek
  > Sakamoto’s at it again with a game of hide and seek, but this time, it’s not with Shin or his daughter. An old friend hid some secret data in this image. Can you find it before the others do?
 
