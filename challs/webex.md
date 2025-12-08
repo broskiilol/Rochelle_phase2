@@ -232,13 +232,16 @@ After solving locally, access the challenge server at http://sweethaven.nitephas
 
 - I first open the website where i am asked a username and password. I also look at the given python code and source code and static code.
 - The phython code first: We have been given the working of the website. the user can register and then submit a review. The code also reveeals filter checks.
-  ```
+```
   if re.search(r"(\\[xu0-9]|\$|'|APOSTROPHE)", review, re.IGNORECASE):
     review = "Best coffee I had"
-  ```
+```
   meaning if x or u or Backslash + digits or $ or ' The literal word APOSTROPHE. If any of these appear, it REPLACES the whole review with "Best coffee I had". This means the challenge expects you to bypass this filter.
   If it passes the filter, Then it does:
-  ```
+```
 review = bytes(review, "utf-8").decode("unicode_escape")
 ```
 It will interpret things like \N{…}, It will convert escaping sequences and It allows injecting characters normally filtered out. This gives potential filter bypass. We need to use SSTI.
+- I try to give different payloads, keeping in mind the filters. I am basically trying to see the classes of the Docker. first i put `\N{DOLLAR SIGN}{ ''.__class__.__mro__[2].__subclasses__() }` Which prints `Best coffee I ever had`. This means the the `\N` is giving some sort of a problem so i switch to `%5CN`
+- I input `%5CN{DOLLAR SIGN}{ ''.__class__.__mro__[2].__subclasses__() }` which again prints `Best coffee I ever had` and i realise that i am still using apostrophes so that is the problem. so i do it without apostrophe `%5CN{DOLLAR SIGN}{().__class__.__mro__[2].__subclasses__()}`.....which also did not work. in fact it kind of crashed and gave me this instead <img width="828" height="497" alt="image" src="https://github.com/user-attachments/assets/9cf4b597-dd13-4d92-b800-0bcc5a11d5b0" />
+
