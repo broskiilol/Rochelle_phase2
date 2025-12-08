@@ -110,7 +110,7 @@ Password: 'p4ssw0rd}'
 ```
 - These are different websites they have given with a username and password. So now i try to enter each of them to get the flag
 
-**Flag:** `GCTF{m0zarellap4ssw0rd}`
+**Flag:** `GCTF{m0zarella_f1ref0x_p4ssw0rd}`
 ### What I learned
 - .rar file is like a folder. It has various other files in it.
 - .ad1 file is a local disk image format file.
