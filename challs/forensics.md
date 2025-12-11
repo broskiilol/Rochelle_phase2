@@ -271,6 +271,7 @@ Then i search for PNG and BMP files using their file headers.
 `grep -obaP "BM" dump/2424.dmp` I dont get any match for PNG, but i get for BMP. I want just the header so `grep -obaP "BM" dump/2424.dmp | head` and i get the offsets.
 I search the offsets' HEX to search for the proper .bmp file. `xxd -s <offset> -l 64 dump/2424.dmp`. Most offsets do not give anything, but the offset `8383447` seems like a probable .bmp file. So i carve it and save it as stage2.bmp...but it is not opening.
 I try changing the header in case that is the problem, but that is not helping either
+I backtrack cause stuff isnt working out. I decide to use binwalk. `binwalk -e dumped/2424.dmp` This gives me 2 images. 
 
 
 - For stage 3: I first dump to find archives. I search for .7z, .zip or .rar files. This gives me 
@@ -279,9 +280,33 @@ I try changing the header in case that is the problem, but that is not helping e
 0x000000003fac3bc0      1      0 R--r-- \Device\HarddiskVolume2\Users\Alissa Simpson\Documents\Important.rar
 0x000000003fb48bc0      1      0 R--r-- \Device\HarddiskVolume2\Users\Alissa Simpson\Documents\Important.rar
 ```
-I dump one of them.
+I want to extract (to extract folder) so i do `vol.py -f MemoryDump_Lab1.raw --profile=Win7SP1x64 dumpfiles -Q 0x000000003fa3ebc0 -D extracted/` to extract that rar and find a `flag3.png` file. I try to open, but it is password protected. 
+<img width="493" height="61" alt="image" src="https://github.com/user-attachments/assets/3165f738-78d8-47a8-b190-af156ac9989a" />
+So now i need to find the password. I research on what NTLM is (it is NT LAN Manager which is used for security purposes for authentication and stuff) 
+I use `hivelist` to see all the registers and their addresses 
+<img width="1430" height="500" alt="image" src="https://github.com/user-attachments/assets/0cf405a0-d550-4d9e-874e-5dd64cafb9b5" />
+I need the hash of these so i do `vol.py -f MemoryDump_Lab1.raw --profile=Win7SP1x64 hashdump -y 0xfffff8a000024010 -s 0xfffff8a0014e9010` and get some wierd letters and numbers
+```bash
+$ vol.py -f MemoryDump_Lab1.raw --profile=Win7SP1x64 hashdump -y 0xfffff8a000024010 -s 0xfffff8a0014e9010
+Volatility Foundation Volatility Framework 2.6.1
+Administrator:500:aad3b435b51404eeaad3b435b51404ee:31d6cfe0d16ae931b73c59d7e0c089c0:::
+Guest:501:aad3b435b51404eeaad3b435b51404ee:31d6cfe0d16ae931b73c59d7e0c089c0:::
+SmartNet:1001:aad3b435b51404eeaad3b435b51404ee:4943abb39473a6f32c11301f4987e7e0:::
+HomeGroupUser$:1002:aad3b435b51404eeaad3b435b51404ee:f0fc3d257814e08fea06e63c5762ebd5:::
+Alissa Simpson:1003:aad3b435b51404eeaad3b435b51404ee:f4ff64c8baac57d22f22edc681055ba6:::
+```
+This hash gives me the rar password which is `f4ff64c8baac57d22f22edc681055ba6` which i can thus use to open the .png file given before. 
+<img width="754" height="678" alt="image" src="https://github.com/user-attachments/assets/9692ebac-0b2c-4332-9947-b69c621f9cc9" />
+Thus i get the third stage flag 
 
 
 
-**Flag:** `flag{th1s_1s_th3_1st_st4g3!!}`
+
+**Flag:** `flag{th1s_1s_th3_1st_st4g3!!}`, `flag{w3ll_3rd_stage_was_easy}`
+
+### What I learnt:
+- Volitility 2 is used to analyse the rar dumps, it extracts data and stuff to find out what is wrong with it.
+- pslist plugin: lists running processes and shows if some process is hidden
+- hivelist plugin: It analyses hives (registerys) to see its mechanisms and workings
+  
 
