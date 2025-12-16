@@ -1,0 +1,23 @@
+# OSINT
+## Cornfield Chase
+> Geoguessr, but make it slightly more ragebait-y.
+### Solution: 
+- I see the utility pole nearby and i translate it
+- "Park Jia" is the owner of the utility pole...which doesnt tell us anything
+- The `N` tells us about the county. `0489` this means in the `N` rectangular area, the pole is 04% east and 89% north. this shows us the approx area of the pole (upper left area basically)
+https://www.reddit.com/r/geoguessr/comments/1k4dsax/a_map_i_made_to_help_with_taiwan_power_pole_codes/
+https://www.plonkit.net/taiwan
+- 
+
+
+## bonsai Bankai:
+> Geoguessr, but make it slightly more ragebait-y
+### Solution:
+- The signboard nearby, i try to translate, it gives `Meiko` some garden which i put into google search, it is not any actual place.
+- I can now see a electricity pole (like the previous challenge) so i try to look into that
+
+- Something to know, different places in Japan have different ways of writing on the plate. It varies in the way of writing etc.
+https://docs.google.com/document/d/16lVvh3sLCnHLh_itpEsvXrHHCR_EPzArBmb4bg6TUTU/edit?usp=drivesdk
+- The writing style in this case is similar to Kyushu style. The plate on it says `659`. The first digit corresponds to latitude (or we can just see the example in the following doc which corresponds to kumamoto. )
+https://docs.google.com/document/d/17WL3aQeSvfnqymGKtV-DbSJDd7KTYCqEbWgtEsJNKFs/edit?tab=t.0#heading=h.roc0cf74fnvx
+- Thus we have an approximate area where we need to be looking. So by trial and error we can get the correct area.
