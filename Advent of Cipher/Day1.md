@@ -1,6 +1,11 @@
 # Day 1:
+## Task 1: Introduction:
 > The unthinkable has happened - McSkidy has been kidnapped. Without her, Wareville’s defenses are faltering, and Christmas itself hangs by a thread. But panic won’t save the season. A long road lies ahead to uncover what truly happened. The TBFC (The Best Festival Company) team already brainstorms what to do next, and their first lead points to the tbfc-web01, a Linux server processing Christmas wishlists. Somewhere within its data may lie the truth: traces of McSkidy’s final actions, or perhaps the clues to King Malhare’s twisted vision for EASTMAS
-## Solution:
+### Solution:
+Just start the virtual machine.
+
+## Task 2: Linux CLI:
+### Solution:
 ```bash
 mcskidy@tbfc-web01:~$ ls
 Desktop    Downloads  Music     Public      Templates  snap
@@ -43,4 +48,7 @@ P.S. Great job finding the guide. Your flag is:
 THM{learning-linux-cli}
 -----------------------------------------------
 ```
-## **Flag:** THM{learning-linux-cli}
+### **Flag:** THM{learning-linux-cli}
+ - Similarly i followed trough and finished the remaining challenges, finding the flags from each one, then completed the objective. I forgot to copy the bash to show it here...
+
+
