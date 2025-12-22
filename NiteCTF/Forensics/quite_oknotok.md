@@ -57,13 +57,13 @@ print(parse_audio("binaural_beats.wav"))
 
 ****
 
-14. in the pastebin link, there's also a comment and reply encoded in base 64 which says:
+- in the pastebin link, there's also a comment and reply encoded in base 64 which says:
 
 ```
 why's everything in base64? how does base64 even work?
 > indices are mapped to base-64 alphabets
 ```
-- In The pastebin "**Tags**" section we have `qoi_op_index`. this leads to [https://en.wikipedia.org/wiki/QOI_(image_format)#Encoding](https://en.wikipedia.org/wiki/QOI_(image_format)#Encoding) . This contains index position formula using rgba values.
+- In The pastebin `Tags` section we have `qoi_op_index`. this leads to [https://en.wikipedia.org/wiki/QOI_(image_format)#Encoding](https://en.wikipedia.org/wiki/QOI_(image_format)#Encoding) . This contains index position formula using rgba values.
 - we extract the RGBA values of the color strip and map them to the base 64 alphabets from these clues. This can be done with a script
 ```py
 from PIL import Image
